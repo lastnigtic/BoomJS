@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> 测试boom</title>
+	<link rel="stylesheet" type="text/css" href="boom-test.css"/>
+	<script type="text/javascript" src="jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="imgBoom.js"></script>
+</head>
+<body>
+	<div class='img-gallary' id="gallary">
+		<img class='boom-img' src='nico.jpg' id='boomTarget'/>
+	</div>
+	<input type="file" name="file" class='file-upload' id='uploadBtn'>
+	<script>
+		var img = document.getElementById('boomTarget');
+		var option = {
+			img: img,
+			columns: 4,
+			rows: 4
+		}
+		var boom = new imgBoom(option);
+		var fileBtn = document.getElementById('uploadBtn');
+		fileBtn.onchange = function(){
+			var file = this.files[0];
+			if(file){
+				var reader = new FileReader();
+				reader.readAsDataURL(file);
+				reader.onload = function(e){
+					var src = e.target.result;
+					var img = document.createElement('img');
+					img.className = 'boom-img';
+					img.src = src;
+					img.id = 'boomTarget'+Math.random().toFixed(4).replace('.','_');
+					let option = {
+						img: img,
+						columns: 5,
+						rows: 5
+					}
+					$('#gallary').append(img);
+					let s = new imgBoom(option);
+				}
+			}
+		}
+	</script>
+</body>
+</html>
