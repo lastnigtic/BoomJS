@@ -1,6 +1,6 @@
 ## boomJS
 
-@(boomJS)[v1.0]
+ @(boomJS)[v1.0]
 ### 一、简介
 - 基于jquery
 - 使用ES6语法
