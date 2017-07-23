@@ -2,12 +2,14 @@
 	(function(){
 		function imgBoom(option,img){
 			option = option || {};
+			this.drwImg = img;
 			this.img = $(img);
 			this.rows = option.rows || 8;
 			this.columns = option.columns || 8;
 			this.duration = option.duration || 1000;
 			this.isBlur = option.isBlur || false;
 			this.isBoom = option.isBoom || false;
+			this.isCanvas = option.isCanvas || true;
 			this.isInit = true;
 			this.img.css('opacity',0);
 			this.img.load(() => {
@@ -20,7 +22,7 @@
 		 * 初始化
 		 */
 		 imgBoom.prototype.init = function(){
-		 	this.createPieces();
+		 	this.isCanvas ? this.createPiecesCan() : this.createPieces();
 		 	this.piecesBoom();
 		 	setTimeout(() => {
 		 		this.piecesRecover()
@@ -32,6 +34,60 @@
 		 	}
 		 }
 
+		 /**
+		  * canvas块
+		  */
+		  imgBoom.prototype.createPiecesCan = function(){
+		  	let id = this.img.attr('id');
+		  	let can = document.createElement('canvas');
+		  	can.height = this.height;
+		  	can.width = this.width;
+		  	let ctx = can.getContext('2d');
+		  	ctx.drawImage(this.drwImg , 0, 0, this.width, this.height);
+		  	this.pieces = [];
+
+			//存放pieces的块
+			this.children = $("<div></div>");
+			this.children.css({
+				'position': 'absolute',
+				'top': 0,
+				'left': 0,
+				'margin-left': this.img.prop('offsetLeft') + 'px',
+				'margin-top': this.img.prop('offsetTop') + 'px',
+				'z-index': 100,
+				'display': 'none'
+			});
+			this.children.attr('id', id+'Children');
+
+			// 创造piece
+			let pieceHeight = this.height / this.rows;
+			let pieceWidth = this.width / this.columns; 
+			let frag = document.createDocumentFragment();
+			let transition = `all ${this.duration}ms ease-out`;
+			for(let i = 0; i < this.columns; i++){
+				let left = '-' + (pieceWidth * i) + 'px';
+				for( let j = 0; j < this.rows; j++){
+					let top = '-' + (pieceHeight * j) + 'px';
+					let child = document.createElement('canvas');
+					child.height = pieceHeight;
+					child.width = pieceWidth;
+					let childctx = child.getContext('2d');
+					let imageData = ctx.getImageData(i*pieceWidth, j*pieceHeight, pieceWidth, pieceHeight);
+					childctx.putImageData(imageData, 0, 0);
+					$(child).css({
+						'position': 'absolute',
+						'left': left.substring(1),
+						'top': top.substring(1),
+						'transition': transition,
+					});
+
+					$(frag).append(child);
+					this.pieces.push($(child));
+				}
+			};
+			this.children.append(frag);
+			this.children.insertAfter(this.img);
+		};
 		/**
 		 * 创造块(单独负责创造小块)
 		 */

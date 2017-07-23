@@ -8,16 +8,16 @@
 </head>
 <body>
 	<div class='img-gallary' id="gallary">
-		<img class='boom-img' src='img/avatar.jpg' id='boomTarget'/>
+		<img class='boom-img' src='img/avatar1.jpg' id='boomTarget'/>
 	</div>
 	<input type="file" name="file" class='file-upload' id='uploadBtn'>
 	<script>
 		let option = {
-			columns: 5,
-			rows: 5,
+			columns: 20,
+			rows: 20,
 			duration: 1000,
 			isBoom: true,
-			isBlur: true
+			isBlur: false,
 		}
 		$('#boomTarget').imgBoom(option);
 
