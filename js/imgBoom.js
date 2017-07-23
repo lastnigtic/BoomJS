@@ -22,7 +22,11 @@
 		 * 初始化
 		 */
 		 imgBoom.prototype.init = function(){
-		 	this.isCanvas ? this.createPiecesCan() : this.createPieces();
+		 	if(!canvasSupport()){
+		 		this.createPieces();
+		 	}else{
+		 		this.isCanvas ? this.createPiecesCan() : this.createPieces();
+		 	}
 		 	this.piecesBoom();
 		 	setTimeout(() => {
 		 		this.piecesRecover()
@@ -208,6 +212,10 @@
 		 		this.img.css('opacity',1);
 		 		this.children.hide();
 		 	},this.duration);
+		 };
+
+		 function canvasSupport() {
+		 	return !!document.createElement('canvas').getContext;
 		 };
 
 		 jQuery.fn.extend({
