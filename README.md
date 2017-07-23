@@ -1,10 +1,6 @@
 ## boomJS
 
-<<<<<<< HEAD
-@ (boomJS)[v1.1]
-=======
- @(boomJS)[v1.0]
->>>>>>> 609660c3493a0425afdf90145486715dc6068d3c
+@(boomJS)[v1.1]
 ### 一、简介
 - 基于jquery
 - 使用ES6语法
