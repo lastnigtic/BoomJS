@@ -1,9 +1,10 @@
 	/*传入ID*/
 	(function(){
-		function imgBoom(option,img){
+		function imgBoom(option,img,order){
 			option = option || {};
 			this.drwImg = img;
 			this.img = $(img);
+			this.order = order;
 			this.rows = option.rows || 8;
 			this.columns = option.columns || 8;
 			this.duration = option.duration || 1000;
@@ -11,15 +12,20 @@
 			this.isBoom = option.isBoom || false;
 			this.isCanvas = option.isCanvas || true;
 			this.isInit = true;
-			this.img.css('opacity',0);
-			this.img.load(() => {
+			this.animationDuration = 0;
+			this.direction = option.direction || 'center';
+
+			if(this.drwImg.complete){
 				this.height = this.img.height();
 				this.width = this.img.width();
 				this.init();
-			});
-			this.height = this.img.height();
-			this.width = this.img.width();
-			this.init();
+			}else{
+				this.drwImg.onload = () => {
+					this.height = this.img.height();
+					this.width = this.img.width();
+					this.init();
+				};
+			}
 		}
 		/**
 		 * 初始化
@@ -31,9 +37,15 @@
 		 		this.isCanvas ? this.createPiecesCan() : this.createPieces();
 		 	}
 		 	this.piecesBoom();
-		 	setTimeout(() => {
-		 		this.piecesRecover()
-		 	},0);
+		 	// 确保爆炸先执行再复原,考虑多个
+		 	var timer = setInterval(() => {
+		 		if(!this.isInit){
+		 			setTimeout(() => {
+		 				this.piecesRecover();
+		 			},this.duration/2);
+		 			clearInterval(timer);
+		 		}
+		 	},100);
 		 	if(this.isBoom){
 		 		this.img.on('click',() => {
 		 			this.piecesBoom();
@@ -153,53 +165,89 @@
 		 */
 		 imgBoom.prototype.piecesBoom = function(){
 
-			// 点击图片(删除全部元素)
-			if(!this.isInit){
-				this.children.show();
-				setTimeout(() => {
-					this.img.remove();
-					this.children.remove();
-				},1.5*this.duration);
-			}
-
-			this.isInit = false;
-
 			// 调整块的位置
 			if(this.children){
 				this.children.css({
 					'margin-left': this.img.prop('offsetLeft') + 'px',
 					'margin-top': this.img.prop('offsetTop') + 'px'
 				})
-			}
+			};
+
+			// 设置爆炸方向 
+			var i,
+			deal,
+			init = 0,
+			total = this.rows*this.columns;
+
+			if(this.isInit){
+				i = 0;
+				deal = () => {
+					init++;
+					if(init == total){
+						this.isInit = false;
+					}
+				};
+			}else{
+				if(this.direction === 'left'){		
+					i = 0;
+					deal = () => {
+						i++;
+					};
+					this.animationDuration = total*5;
+				}else if(this.direction === 'right'){
+					i = total;
+					deal =() => {
+						i--;
+					};
+					this.animationDuration = total*5;
+				}else{
+					i = 0;
+					deal = () => {};
+				}
+			};
 
 			setTimeout(() => {
 
 				$(this.pieces).each((idx, item) => {
-					let x = (100-(Math.random()*200)).toFixed() + 'px';
-					let y = (100-(Math.random()*200)).toFixed() + 'px';
-					let transformPosition = `translate3D(${x}, ${y} ,0) `;
-					let transformSize = `scale(${(Math.random()/2)})`;
-					let  blur;
+					(function(t){
+						setTimeout(()=>{
+							let x = (100-(Math.random()*200)).toFixed() + 'px';
+							let y = (100-(Math.random()*200)).toFixed() + 'px';
+							let transformPosition = `translate3D(${x}, ${y} ,0) `;
+							let transformSize = `scale(${(Math.random()/2)})`;
+							let  blur;
 
-					if(this.isBlur){
-						blur = `blur(${(Math.random()*10).toFixed()}px)`;
-					}else{
-						blur = 'none';
-					}
+							if(this.isBlur){
+								blur = `blur(${(Math.random()*10).toFixed()}px)`;
+							}else{
+								blur = 'none';
+							}
 
-					item.css({
-						'border-radius':'50%',
-						'transform': transformPosition + transformSize,
-						'opacity': 0,
-						'filter': blur
-					});
+							item.css({
+								'border-radius':'50%',
+								'transform': transformPosition + transformSize,
+								'opacity': 0,
+								'filter': blur
+							});
+						},t*5);
+					}(i))
+					deal();
 				});
 				this.img.css('opacity',0);
 			},0);
+
+			// 点击图片(删除全部元素)
+			if(!this.isInit){
+				this.children.show();
+				setTimeout(() => {
+					this.img.remove();
+					this.children.remove();
+				},this.duration+this.animationDuration+100);
+			}
 		};
 
 		/**
-		 * 块恢复,children隐藏,img显示(opacity
+		 * 块恢复,children隐藏,img显示(opacity)
 		 */
 		 imgBoom.prototype.piecesRecover = function(){	
 		 	this.children.show();
@@ -227,7 +275,7 @@
 		 		for(let i = 0;i < this.length; i++){
 		 			this[i].style.opacity = 0;
 		 			setTimeout(()=>{
-		 				new imgBoom(option, this[i])
+		 				new imgBoom(option, this[i], i);
 		 			},i*(option.spaceTime ? option.spaceTime : 1000));
 		 		}
 		 		return this;

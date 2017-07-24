@@ -14,6 +14,7 @@
 - isBlur： 是否使用模糊效果（分割太多会卡顿）(default: false)
 - isBoom： 是否添加点击炸裂效果（会删除元素）(defalut: false)
 - idCanvas: 是否启用canvas(default: true)
+- direction: 爆炸起始方向('left','right','center')(default: 'center')
 - duration：动画时长(default: 1000ms)
 - spaceTime: 绑定一组图片时出现间隔时长(default: 1000ms)
 #### 3、效果

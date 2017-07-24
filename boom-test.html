@@ -14,16 +14,12 @@
 	</div>
 	<input type="file" name="file" class='file-upload' id='uploadBtn'>
 	<script>
-		// let option = {
-		// 	columns: 20,
-		// 	rows: 20,
-		// 	duration: 1000,
-		// 	isBoom: true,
-		// 	isBlur: false,
-		// }
-		// $('#boomTarget').imgBoom(option);
-
-		$('img').imgBoom({spaceTime: 2000});
+		$('img').imgBoom({
+			columns:10,
+			rows:10,
+			isBoom: true,
+			direction:'right'
+		});
 
 
 		let fileBtn = document.getElementById('uploadBtn');
