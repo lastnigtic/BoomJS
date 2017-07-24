@@ -9,19 +9,21 @@
 <body>
 	<div class='img-gallary' id="gallary">
 		<img class='boom-img' src='img/avatar1.jpg' id='boomTarget'/>
+		<img class='boom-img' src='img/avatar.jpg' id='boomTarget1'/>
+		<img class='boom-img' src='img/avatar1.jpg' id='boomTarget2'/>
 	</div>
 	<input type="file" name="file" class='file-upload' id='uploadBtn'>
 	<script>
-		let option = {
-			columns: 20,
-			rows: 20,
-			duration: 1000,
-			isBoom: true,
-			isBlur: false,
-		}
-		$('#boomTarget').imgBoom(option);
+		// let option = {
+		// 	columns: 20,
+		// 	rows: 20,
+		// 	duration: 1000,
+		// 	isBoom: true,
+		// 	isBlur: false,
+		// }
+		// $('#boomTarget').imgBoom(option);
 
-
+		$('img').imgBoom({spaceTime: 2000});
 
 
 		let fileBtn = document.getElementById('uploadBtn');

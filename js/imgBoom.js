@@ -16,7 +16,10 @@
 				this.height = this.img.height();
 				this.width = this.img.width();
 				this.init();
-			})
+			});
+			this.height = this.img.height();
+			this.width = this.img.width();
+			this.init();
 		}
 		/**
 		 * 初始化
@@ -220,7 +223,13 @@
 
 		 jQuery.fn.extend({
 		 	imgBoom: function(option){
-		 		new imgBoom(option,this[0]);
+		 		option = option || {};
+		 		for(let i = 0;i < this.length; i++){
+		 			this[i].style.opacity = 0;
+		 			setTimeout(()=>{
+		 				new imgBoom(option, this[i])
+		 			},i*(option.spaceTime ? option.spaceTime : 1000));
+		 		}
 		 		return this;
 		 	}
 		 });
